@@ -30,32 +30,39 @@ function StoryViewer({ items, story, onClose }) {
         >
           X
         </button>
-        <div className="w-[330px] h-[570px] flex items-center justify-center relative">
-          <ProgressContainer
-            total={items.length}
-            current={currentIndex}
-            onComplete={handleNextStory}
-            duration={isVideo ? VIDEO_MAX_DURATION : IMAGE_DURATION}
+        <div className="relative w-full max-h-[97vh] max-w-[400px] aspect-[9/16] bg-black rounded-lg overflow-hidden shadow-2xl">
+           <div className="absolute top-0 left-0 w-full z-60">
+            <ProgressContainer
+              total={items.length}
+              current={currentIndex}
+              onComplete={handleNextStory}
+              duration={isVideo ? VIDEO_MAX_DURATION : IMAGE_DURATION}
+            />
+          </div>
+          <img
+            src={currentStory.image}
+            alt="blur-bg"
+            className="absolute inset-0 w-full h-full object-cover blur-xl opacity-50 scale-110"
           />
-          {isVideo ? (
-            <div>
+          <div className="relative w-full h-full flex items-center justify-center">
+            {isVideo ? (
               <video
                 key={currentStory.id}
                 src={currentStory.image}
                 controls={false}
                 autoPlay
                 onEnded={handleNextStory}
-                className="max-w-full h-full object-cover rounded-lg"
+                className="w-full h-full object-contain"
               />
-            </div>
-          ) : (
-            <img
-              key={currentStory.id}
-              src={currentStory.image}
-              alt="story"
-              className="max-w-full h-full object-cover rounded-lg"
-            />
-          )}
+            ) : (
+              <img
+                key={currentStory.id}
+                src={currentStory.image}
+                alt="story"
+                className="w-full h-full object-contain"
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>
