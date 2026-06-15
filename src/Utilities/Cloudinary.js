@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const CLOUD_NAME = "dxngb5bdo"; 
-const UPLOAD_PRESET = "my_app_unsigned_preset"; 
+const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 export const uploadToCloudinary = async (file) => {
   const formData = new FormData();
