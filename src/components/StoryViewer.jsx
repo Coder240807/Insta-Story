@@ -1,25 +1,26 @@
 import React, { useState } from "react";
 import ProgressContainer from "./ProgressContainer";
 
-function StoryViewer({ items, story, onClose }) {
-  const [currentIndex, setCurrentIndex] = useState(() => {
-    const index = items.findIndex((s) => s.id === story.id);
-    return index !== -1 ? index : 0;
-  });
+function StoryViewer({ items, story, onClose, onNext, onPrev }) {
+  const currentIndex = items.findIndex((s) => s.id === story.id);
+  const currentStory = items[currentIndex !== -1 ? currentIndex : 0];
 
-  const currentStory = items[currentIndex];
+  if(!currentStory) {
+    return null; // 
+  }
+
   const isVideo = currentStory.image.match(/\.(mp4|mov|webm|quicktime)$/i);
 
-  const handleNextStory = () => {
+  const autohandleNextStory = () => {
     if (currentIndex < items.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+      onNext();
     } else {
       onClose();
     }
   };
 
   const IMAGE_DURATION = 3000;
-  const VIDEO_MAX_DURATION = 15000;
+  const VIDEO_MAX_DURATION = 30000;
 
   return (
     <div>
@@ -30,12 +31,31 @@ function StoryViewer({ items, story, onClose }) {
         >
           X
         </button>
-        <div className="relative w-full max-h-[97vh] max-w-[400px] aspect-[9/16] bg-black rounded-lg overflow-hidden shadow-2xl">
+
+        {currentIndex > 0 && (
+          <button
+            onClick={onPrev}
+            className="absolute cursor-pointer top-1/2 left-95 transform -translate-y-1/2 text-[#212121] text-2xl font-bold bg-white bg-opacity-50 rounded-full w-10 h-10 pb-2 flex items-center justify-center"
+          >
+            &lt;
+          </button>
+        )} 
+
+        {currentIndex < items.length - 1 && (
+          <button
+            onClick={onNext}
+            className="absolute cursor-pointer top-1/2 right-95 transform -translate-y-1/2 text-[#212121] text-2xl font-bold bg-white bg-opacity-50 rounded-full w-10 h-10 pb-2 flex items-center justify-center"
+          >
+            &gt;
+          </button>
+        )}
+
+        <div className="relative w-full max-h-[97vh] max-w-[400px] aspect-9/16 bg-black rounded-lg overflow-hidden shadow-2xl">
            <div className="absolute top-0 left-0 w-full z-60">
             <ProgressContainer
               total={items.length}
               current={currentIndex}
-              onComplete={handleNextStory}
+              onComplete={autohandleNextStory}
               duration={isVideo ? VIDEO_MAX_DURATION : IMAGE_DURATION}
             />
           </div>
@@ -51,7 +71,7 @@ function StoryViewer({ items, story, onClose }) {
                 src={currentStory.image}
                 controls={false}
                 autoPlay
-                onEnded={handleNextStory}
+                onEnded={autohandleNextStory}
                 className="w-full h-full object-contain"
               />
             ) : (

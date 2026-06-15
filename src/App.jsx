@@ -33,6 +33,25 @@ function App() {
     setActiveStory(null);
   }, []);
 
+  const navigateStory = useCallback(
+    (direction) => {
+      setActiveStory((currentActiveStory) => {
+        if (!currentActiveStory) return null;
+        const currentIndex = allStories.findIndex(
+          (s) => s.id === currentActiveStory.id,
+        );
+        const next = currentIndex + direction;
+
+        if (next >= 0 && next < allStories.length) return allStories[next];
+        return null;
+      });
+    },
+    [allStories],
+  );
+
+  const nextStory = useCallback(() => navigateStory(1), [navigateStory]);
+  const prevStory = useCallback(() => navigateStory(-1), [navigateStory]);
+
   useEffect(() => {
     const storedStories = localStorage.getItem("stories");
 
@@ -52,7 +71,7 @@ function App() {
 
   return (
     <>
-      <div>
+      <div className="mt-4">
         <StoriesBr
           stories={allStories}
           onUpload={uploadStory}
@@ -63,6 +82,8 @@ function App() {
             items={allStories}
             story={activeStory}
             onClose={handleCloseStory}
+            onNext={nextStory}
+            onPrev={prevStory}
           />
         )}
       </div>
