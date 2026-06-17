@@ -66,11 +66,6 @@ function AddStory({ onImageUpload }) {
         className="hidden"
       />
 
-      {/* 
-        PORTAL ESCAPE HATCH: 
-        If the status is active, project this component onto document.body.
-        This forces it out of the story bar's "overflow-hidden" cage completely.
-      */}
       {status !== 'idle' && createPortal(
         <div 
           className="fixed top-50 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center min-w-[200px] bg-white p-4 rounded-2xl shadow-2xl border border-gray-100 text-center"
