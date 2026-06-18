@@ -27,6 +27,13 @@ function App() {
 
   const handleActiveStory = useCallback((story) => {
     setActiveStory(story);
+    setStory((prevStories) => {
+      const updatedStories = prevStories.map((s) =>
+        s.id === story.id ? { ...s, isSeen: true } : s,
+      );
+      localStorage.setItem("stories", JSON.stringify(updatedStories));
+      return updatedStories;
+    });
   }, []);
 
   const handleCloseStory = useCallback(() => {
