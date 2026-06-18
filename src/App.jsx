@@ -12,14 +12,23 @@ function App() {
 
   const [activeStory, setActiveStory] = useState(null);
 
+  const sortStories = (stories) => {
+    return stories.sort((a,b)=>{
+      if(a.isSeen && !b.isSeen) return 1;
+      if(!a.isSeen && b.isSeen) return -1;
+      return b.timestamp - a.timestamp;
+    })
+  }
+
   const uploadStory = useCallback((url) => {
     const newStory = {
       id: crypto.randomUUID(),
       image: url,
       timestamp: Date.now(),
+      isSeen: false,
     };
     setStory((prevStories) => {
-      const updatedStories = [...prevStories, newStory];
+      const updatedStories = sortStories([...prevStories, newStory]);
       localStorage.setItem("stories", JSON.stringify(updatedStories));
       return updatedStories;
     });
