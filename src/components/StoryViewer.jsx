@@ -1,17 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import ProgressContainer from "./ProgressContainer";
+import StoryMedia from "./StoryMedia";
+
+const getOptimizedUrl = (url) => {
+  if (!url || !url.includes("res.cloudinary.com")) return url;
+  if (url.includes("/video/upload/")) {
+    return url.replace(
+      "/video/upload/",
+      "/video/upload/f_auto,q_auto,w_450,vc_vp9/",
+    );
+  }
+  return url.replace("/image/upload/", "/image/upload/f_auto,q_auto,w_450/");
+};
 
 function StoryViewer({ items, story, onClose, onNext, onPrev }) {
   const currentIndex = items.findIndex((s) => s.id === story.id);
   const currentStory = items[currentIndex !== -1 ? currentIndex : 0];
 
-  if(!currentStory) {
-    return null; // 
+  const [isMediaLoading, setIsMediaLoading] = useState(true);
+
+  if (!currentStory) {
+    return null; //
   }
 
   const isVideo = currentStory.image.match(/\.(mp4|mov|webm|quicktime)$/i);
+  const optimizedUrl = getOptimizedUrl(currentStory.image);
 
   const autohandleNextStory = () => {
+    setIsMediaLoading(true);
     if (currentIndex < items.length - 1) {
       onNext();
     } else {
@@ -21,6 +37,12 @@ function StoryViewer({ items, story, onClose, onNext, onPrev }) {
 
   const IMAGE_DURATION = 3000;
   const VIDEO_MAX_DURATION = 30000;
+
+  const InnerLoader = (
+    <div className="absolute inset-0 w-full h-full bg-neutral-950 flex items-center justify-center z-20">
+      <div className="loader"></div>
+    </div>
+  );
 
   return (
     <div>
@@ -34,16 +56,22 @@ function StoryViewer({ items, story, onClose, onNext, onPrev }) {
 
         {currentIndex > 0 && (
           <button
-            onClick={onPrev}
+            onClick={() => {
+              setIsMediaLoading(true);
+              onPrev();
+            }}
             className="absolute cursor-pointer top-1/2 left-95 transform -translate-y-1/2 text-[#212121] text-2xl font-bold bg-white bg-opacity-50 rounded-full w-10 h-10 pb-2 flex items-center justify-center"
           >
             &lt;
           </button>
-        )} 
+        )}
 
         {currentIndex < items.length - 1 && (
           <button
-            onClick={onNext}
+            onClick={() => {
+              setIsMediaLoading(true);
+              onNext();
+            }}
             className="absolute cursor-pointer top-1/2 right-95 transform -translate-y-1/2 text-[#212121] text-2xl font-bold bg-white bg-opacity-50 rounded-full w-10 h-10 pb-2 flex items-center justify-center"
           >
             &gt;
@@ -51,7 +79,7 @@ function StoryViewer({ items, story, onClose, onNext, onPrev }) {
         )}
 
         <div className="relative w-full max-h-[97vh] max-w-[400px] aspect-9/16 bg-black rounded-lg overflow-hidden shadow-2xl">
-           <div className="absolute top-0 left-0 w-full z-60">
+          <div className="absolute top-0 left-0 w-full z-60">
             <ProgressContainer
               total={items.length}
               current={currentIndex}
@@ -59,29 +87,27 @@ function StoryViewer({ items, story, onClose, onNext, onPrev }) {
               duration={isVideo ? VIDEO_MAX_DURATION : IMAGE_DURATION}
             />
           </div>
-          <img
-            src={currentStory.image}
-            alt="blur-bg"
-            className="absolute inset-0 w-full h-full object-cover blur-xl opacity-50 scale-110"
-          />
+          
+          {!isVideo ? (
+            <div
+              className="absolute inset-0 w-full h-full bg-cover bg-center blur-xl opacity-40 scale-110 pointer-events-none"
+              style={{ backgroundImage: `url(${optimizedUrl})` }}
+            />
+          ) : (
+            <div className="absolute inset-0 w-full h-full bg-neutral-900 pointer-events-none" />
+          )}
+
+          {isMediaLoading && InnerLoader}
+
           <div className="relative w-full h-full flex items-center justify-center">
-            {isVideo ? (
-              <video
-                key={currentStory.id}
-                src={currentStory.image}
-                controls={false}
-                autoPlay
-                onEnded={autohandleNextStory}
-                className="w-full h-full object-contain"
-              />
-            ) : (
-              <img
-                key={currentStory.id}
-                src={currentStory.image}
-                alt="story"
-                className="w-full h-full object-contain"
-              />
-            )}
+            <StoryMedia
+              isVideo={isVideo}
+              currentStory={currentStory}
+              optimizedUrl={optimizedUrl}
+              handleAutoNext={autohandleNextStory}
+              setIsMediaLoading={setIsMediaLoading}
+            />
+
           </div>
         </div>
       </div>

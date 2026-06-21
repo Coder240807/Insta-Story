@@ -9,6 +9,7 @@ function StoryItem({ story, handleActiveStory }) {
         onClick={() => handleActiveStory(story)}
         className="rounded-full cursor-pointer object-center overflow-hidden p-1"
       >
+      
         {isVideo ? (
           <video
             src={story.image}

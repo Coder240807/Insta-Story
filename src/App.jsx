@@ -1,24 +1,35 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, lazy, Suspense } from "react";
 import StoriesBr from "./components/StoriesBr";
 import StoryViewer from "./components/StoryViewer";
 import "./App.css";
 import "./index.css";
 
+
+const sortStories = (stories) => {
+    return stories.sort((a, b) => {
+      if (a.isSeen && !b.isSeen) return 1;
+      if (!a.isSeen && b.isSeen) return -1;
+      return b.timestamp - a.timestamp;
+    });
+  };
+
 function App() {
-  let [allStories, setStory] = useState(() => {
+  const [allStories, setStory] = useState(() => {
     const storedStories = localStorage.getItem("stories");
-    return storedStories ? JSON.parse(storedStories) : [];
+    if (!storedStories) return [];
+    const parsedStories = JSON.parse(storedStories);
+    const daysInMilliseconds = 24 * 60 * 60 * 1000;
+
+    const activeStories = parsedStories.filter((story) => {
+      return Date.now() - story.timestamp < daysInMilliseconds;
+    });
+    if (activeStories.length !== parsedStories.length) {
+      localStorage.setItem("stories", JSON.stringify(activeStories));
+    }
+    return activeStories;
   });
 
   const [activeStory, setActiveStory] = useState(null);
-
-  const sortStories = (stories) => {
-    return stories.sort((a,b)=>{
-      if(a.isSeen && !b.isSeen) return 1;
-      if(!a.isSeen && b.isSeen) return -1;
-      return b.timestamp - a.timestamp;
-    })
-  }
 
   const uploadStory = useCallback((url) => {
     const newStory = {
@@ -68,23 +79,6 @@ function App() {
   const nextStory = useCallback(() => navigateStory(1), [navigateStory]);
   const prevStory = useCallback(() => navigateStory(-1), [navigateStory]);
 
-  useEffect(() => {
-    const storedStories = localStorage.getItem("stories");
-
-    if (storedStories) {
-      const daysInMilliseconds = 24 * 60 * 60 * 1000; // 1 day in milliseconds
-
-      const filteredStories = allStories.filter((story) => {
-        const storyAge = Date.now() - story.timestamp;
-        return storyAge < daysInMilliseconds; // Keep stories that are less than 24 hours old
-      });
-      if (filteredStories.length !== allStories.length) {
-        setStory(filteredStories);
-        localStorage.setItem("stories", JSON.stringify(filteredStories));
-      }
-    }
-  }, []);
-
   return (
     <>
       <div className="mt-4">
@@ -93,7 +87,8 @@ function App() {
           onUpload={uploadStory}
           handleActiveStory={handleActiveStory}
         />
-        {activeStory && (
+      </div>
+      {activeStory && (
           <StoryViewer
             items={allStories}
             story={activeStory}
@@ -101,8 +96,7 @@ function App() {
             onNext={nextStory}
             onPrev={prevStory}
           />
-        )}
-      </div>
+      )}
     </>
   );
 }

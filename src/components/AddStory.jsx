@@ -1,39 +1,32 @@
 import React, { useRef, useState } from "react";
-import { createPortal } from "react-dom"; 
+import { createPortal } from "react-dom";
 import { uploadToCloudinary } from "../Utilities/Cloudinary";
 
 function AddStory({ onImageUpload }) {
   const fileInputRef = useRef(null);
-  const [status, setStatus] = useState('idle'); // 'idle', 'loading', 'success'
+  const [status, setStatus] = useState("idle"); // 'idle', 'loading', 'success'
 
   const handleFileChage = async (event) => {
     const file = event.target.files ? event.target.files[0] : null;
     if (!file) return;
 
-    setStatus('loading');
+    setStatus("loading");
 
     try {
       const imageUrl = await uploadToCloudinary(file);
       onImageUpload(imageUrl);
-      
-      setStatus('success');
 
-     
-      setTimeout(() => {
-        setStatus('idle');
-      }, 2000);
-
+      setStatus("idle");
     } catch (error) {
       console.error("Error uploading image:", error);
-      setStatus('idle');
+      setStatus("idle");
     }
   };
 
-  const isUploading = status === 'loading';
+  const isUploading = status === "loading";
 
   return (
-    <div className="flex flex-col items-center justify-center h-26 w-24 flex-shrink-0 ml-40">
-      {/* Upload Action Button */}
+    <div className="flex flex-col items-center justify-center h-26 w-24 shrink-0 ml-[10vw]">
       <button
         title="Add New"
         type="button"
@@ -66,28 +59,30 @@ function AddStory({ onImageUpload }) {
         className="hidden"
       />
 
-      {status !== 'idle' && createPortal(
-        <div 
-          className="fixed top-50 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center min-w-[200px] bg-white p-4 rounded-2xl shadow-2xl border border-gray-100 text-center"
-          style={{ zIndex: 99999 }} // Explicit override to force presentation on top of all page elements
-        >
-          {status === 'loading' && (
-            <div className="uiverse-container scale-75 mb-2">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          )}
+      {isUploading &&
+        createPortal(
+          <div
+            className="fixed top-50 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center min-w-[200px] bg-white p-4 rounded-2xl shadow-2xl border border-gray-100 text-center"
+            style={{ zIndex: 99999 }} 
+          >
+            {status === "loading" && (
+              <div className="uiverse-container scale-75 mb-2">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            )}
 
-          {status === 'success' && (
-            <p className="text-[#9b59b6] font-sans text-lg font-bold whitespace-nowrap animate-bounce">
-              Added story successfully!
-            </p>
-          )}
-        </div>,
-        document.body // Injected safely at the root level of your website structure
-      )}
+            {/*{status === "success" && (
+              
+                <p className="text-[#9b59b6] font-sans text-lg font-bold whitespace-nowrap animate-bounce">
+                  Added story successfully!
+                </p>
+            )}*/}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
