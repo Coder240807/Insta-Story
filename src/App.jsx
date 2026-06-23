@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, lazy, Suspense } from "react";
+import React, { useCallback, useState, useEffect} from "react";
 import StoriesBr from "./components/StoriesBr";
 import StoryViewer from "./components/StoryViewer";
 import "./App.css";
@@ -31,6 +31,22 @@ function App() {
 
   const [activeStory, setActiveStory] = useState(null);
 
+  useEffect(() => {
+    if (!activeStory) return;
+
+    setStory((prevStories) => {
+      
+      const current = prevStories.find((s) => s.id === activeStory.id);
+      if (current && current.isSeen) return prevStories;
+
+      const updatedStories = prevStories.map((s) =>
+        s.id === activeStory.id ? { ...s, isSeen: true } : s
+      );
+      localStorage.setItem("stories", JSON.stringify(updatedStories));
+      return updatedStories;
+    });
+  }, [activeStory?.id]);
+
   const uploadStory = useCallback((url) => {
     const newStory = {
       id: crypto.randomUUID(),
@@ -47,13 +63,6 @@ function App() {
 
   const handleActiveStory = useCallback((story) => {
     setActiveStory(story);
-    setStory((prevStories) => {
-      const updatedStories = prevStories.map((s) =>
-        s.id === story.id ? { ...s, isSeen: true } : s,
-      );
-      localStorage.setItem("stories", JSON.stringify(updatedStories));
-      return updatedStories;
-    });
   }, []);
 
   const handleCloseStory = useCallback(() => {

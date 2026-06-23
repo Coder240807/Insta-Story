@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from "react";
+import React, { useState } from "react";
 import ProgressContainer from "./ProgressContainer";
 import StoryMedia from "./StoryMedia";
 
@@ -107,7 +107,6 @@ function StoryViewer({ items, story, onClose, onNext, onPrev }) {
               handleAutoNext={autohandleNextStory}
               setIsMediaLoading={setIsMediaLoading}
             />
-
           </div>
         </div>
       </div>
