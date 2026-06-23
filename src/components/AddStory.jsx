@@ -73,13 +73,6 @@ function AddStory({ onImageUpload }) {
                 <span></span>
               </div>
             )}
-
-            {/*{status === "success" && (
-              
-                <p className="text-[#9b59b6] font-sans text-lg font-bold whitespace-nowrap animate-bounce">
-                  Added story successfully!
-                </p>
-            )}*/}
           </div>,
           document.body,
         )}
