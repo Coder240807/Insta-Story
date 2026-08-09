@@ -1,7 +1,7 @@
 # 📸 Insta-Story Component
 
 [![Repository URL](https://img.shields.io/badge/GitHub-Repo-blue?style=flat&logo=github)](https://github.com/Coder240807/Insta-Story)
-> **Project URL**: [https://github.com/Coder240807/Insta-Story](https://github.com/Coder240807/Insta-Story)
+> **Project URL**: [https://github.com/Coder240807/Insta-Story](https://github.com/Coder240807/Insta-Story)  
 > **Project Challenge**: Inspired by [roadmap.sh Stories Feature Project](https://roadmap.sh/projects/stories-feature)
 
 A responsive, interactive Instagram-style stories component built using **React.js**, **Vite**, and **Tailwind CSS**. This project replicates the core user interface and interactions of Instagram Stories, including dynamic story viewing, progress bar tracking, and fluid responsiveness across devices.
