@@ -1,5 +1,8 @@
 # 📸 Insta-Story Component
 
+[![Repository URL](https://img.shields.io/badge/GitHub-Repo-blue?style=flat&logo=github)](https://github.com/Coder240807/Insta-Story)
+> **Project URL**: [https://github.com/Coder240807/Insta-Story](https://github.com/Coder240807/Insta-Story)
+
 A responsive, interactive Instagram-style stories component built using **React.js**, **Vite**, and **Tailwind CSS**. This project replicates the core user interface and interactions of Instagram Stories, including dynamic story viewing, progress bar tracking, and fluid responsiveness across devices.
 
 ---
@@ -56,6 +59,9 @@ In the project directory, you can run:
 1. npm run dev: Starts the local development server with HMR.
 2. npm run build: Builds the app for production to the dist folder.
 3. npm run preview: Bootstraps a local web server to preview the production build.
+
+### Repository Link
+GitHub Repository: https://github.com/Coder240807/Insta-Story
 
 ###  Live Application 
 https://insta-story-by-vigya.vercel.app/
