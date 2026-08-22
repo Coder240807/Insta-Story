@@ -6,12 +6,12 @@ import "./index.css";
 
 
 const sortStories = (stories) => {
-    return stories.sort((a, b) => {
-      if (a.isSeen && !b.isSeen) return 1;
-      if (!a.isSeen && b.isSeen) return -1;
-      return b.timestamp - a.timestamp;
-    });
-  };
+  return [...stories].sort((a, b) => {
+    if (a.isSeen && !b.isSeen) return 1;
+    if (!a.isSeen && b.isSeen) return -1;
+    return b.timestamp - a.timestamp;
+  });
+};
 
 function App() {
   const [allStories, setStory] = useState(() => {
